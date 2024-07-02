@@ -1,5 +1,6 @@
 import { authService } from "fbase";
-import { useState } from "react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react"; 
 
 const Auth = () => {
     const [email, setEmail] = useState("");
@@ -19,18 +20,28 @@ const Auth = () => {
 
     const onSubmit = async (event) => {
         event.preventDefault();
-        try{
-            let data;
+            let user;
             if(newAccount){
-                data = await authService.createUserWithEmailAndPassword(email, password);
+                createUserWithEmailAndPassword(authService, email, password)
+                    .then((userCredential) => {
+                        user = userCredential.user;
+                        console.log(user);
+                    })
+                    .catch((error) => {
+                        console.log(error.code);
+                        console.log(error.message);
+                    });
             } else{
-                data = await authService.signInWithEmailAndPassword(email,password);
+                signInWithEmailAndPassword(authService, email, password)
+                    .then((userCredential) => {
+                        user = userCredential.user;
+                        console.log(user);
+                    })
+                    .catch((error) => {
+                        console.log(error.code);
+                        console.log(error.message);
+                    });
             }
-            console.log(data);
-        }catch (error){
-            console.log(error);
-        }
-
     }
     
     return(
