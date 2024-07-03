@@ -20,6 +20,8 @@ const Auth = () => {
         }
     }
 
+    const ToggleAccount = () => setNewAccount((prev) => !prev);
+
     const onSubmit = async (event) => {
         event.preventDefault();
             let user;
@@ -30,6 +32,7 @@ const Auth = () => {
                         console.log(user);
                     })
                     .catch((error) => {
+                        setError(error.message);
                         console.log(error.code);
                         console.log(error.message);
                     });
@@ -40,6 +43,7 @@ const Auth = () => {
                         console.log(user);
                     })
                     .catch((error) => {
+                        setError(error.message);
                         console.log(error.code);
                         console.log(error.message);
                     });
@@ -52,7 +56,11 @@ const Auth = () => {
                 <input name="email" type="email" placeholder="Eamil" value={email} onChange={onChange} required/>
                 <input name="password" type="password" placeholder="Password" value={password} onChange={onChange} required/>
                 <input type="submit" value={newAccount ? "Create Account" : "Log in"}/>
+                {error}
             </form>
+            <span onClick={ToggleAccount}>
+                {newAccount ? "Sign In" : "Create Account"}
+            </span>
             <div>
                 <button>Continue with Google</button>
                 <button>Continue with Github</button>
