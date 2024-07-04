@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {db} from "fbase"
-import { addDoc, collection, getDocs, onSnapshot, query } from "firebase/firestore";
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
 
 const Home = ({userObj}) => {
     const [nTweet, setNTweet] = useState("");
@@ -16,13 +16,6 @@ const Home = ({userObj}) => {
         setNTweet("");
     };
 
-    // const getNTweets = async () => {
-    //     const querySnapshot = await getDocs(collection(db, "nTweets"));
-    //         querySnapshot.forEach((doc) => {
-    //             const nTweetObject = {...doc.data(), id: doc.id};
-    //             setNTweets((prev)=>[nTweetObject, ...prev])
-    //         }); 
-    // };
 
     useEffect(()=> {
         const q = collection(db, "nTweets");
@@ -34,7 +27,7 @@ const Home = ({userObj}) => {
             setNTweets(docs)
         });
         return() => unsubscribe();
-    }, []);
+    });
 
     const onChange = (event) =>{
         event.preventDefault();
