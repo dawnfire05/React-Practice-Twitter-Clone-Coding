@@ -1,18 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {db} from "fbase"
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs, onSnapshot, query } from "firebase/firestore";
 
-const Home = () => {
+const Home = ({userObj}) => {
     const [nTweet, setNTweet] = useState("");
+    const [nTweets, setNTweets ] = useState([]);
 
     const onSubmit = async (event) => {
         event.preventDefault();
         await addDoc(collection(db, "nTweets"), {
             text: nTweet,
-            createdAt: Date.now()
+            createdAt: Date.now(),
+            creatorId: userObj.uid
         })
         setNTweet("");
     };
+
+    // const getNTweets = async () => {
+    //     const querySnapshot = await getDocs(collection(db, "nTweets"));
+    //         querySnapshot.forEach((doc) => {
+    //             const nTweetObject = {...doc.data(), id: doc.id};
+    //             setNTweets((prev)=>[nTweetObject, ...prev])
+    //         }); 
+    // };
+
+    useEffect(()=> {
+        const q = collection(db, "nTweets");
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const docs = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setNTweets(docs)
+        });
+        return() => unsubscribe();
+    }, []);
 
     const onChange = (event) =>{
         event.preventDefault();
@@ -23,16 +45,26 @@ const Home = () => {
     };
 
     return (
-        <form onSubmit={onSubmit}>
-            <input
-                value = {nTweet}
-                onChange={onChange}
-                type = "text"
-                placeholder="What's on your mind?"
-                maxLength={120}
-            />
-            <input type="submit" value="Nweet"/>
-        </form>
+        <>
+            <form onSubmit={onSubmit}>
+                <input
+                    value = {nTweet}
+                    onChange={onChange}
+                    type = "text"
+                    placeholder="What's on your mind?"
+                    maxLength={120}
+                />
+                <input type="submit" value="Nweet"/>
+            </form>
+            <div>
+                {nTweets.map((nTweet)=>(
+                    <div key ={nTweet.id}>
+                        <h4>{nTweet.text}</h4>
+                    </div>
+                ))}
+            </div>
+        </>
+
     )
 };
 
