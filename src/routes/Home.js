@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {db} from "fbase"
 import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import NTweet from "components/NTweet";
 
 const Home = ({userObj}) => {
     const [nTweet, setNTweet] = useState("");
@@ -47,13 +48,11 @@ const Home = ({userObj}) => {
                     placeholder="What's on your mind?"
                     maxLength={120}
                 />
-                <input type="submit" value="Nweet"/>
+                <input type="submit" value="NTweet"/>
             </form>
             <div>
                 {nTweets.map((nTweet)=>(
-                    <div key ={nTweet.id}>
-                        <h4>{nTweet.text}</h4>
-                    </div>
+                    <NTweet key={nTweet.id} nTweetObj={nTweet} isOwner = {nTweet.creatorId === userObj.uid}/>
                 ))}
             </div>
         </>
